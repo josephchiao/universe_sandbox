@@ -2,18 +2,17 @@ import numpy as np
 import setup
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import time
 
 ## Set up variables:
-dt = 100
+dt = 50  ## Similation resolution, the time step for each physical similation
 duration = 3600000   ## in seconds -----> (10 ** 8 / 3) #1 years
-datapoints = 300
+datapoints = 300  ## The number of data points. Not all similation points are recorded. 
 
 ## automated variables
 data_dt = int(duration / (dt * datapoints))
 cord_record = []
 v_record = []
-time_record = [data_dt * i for i in range(datapoints)]
+time_record = []
 
 ## Objects
 names = ["Earth", "Moon", "Space station"]
@@ -30,10 +29,10 @@ elaticity = [0, 0, 0]
 
 def initialize():
     space = setup.Space()
-    objects = [setup.Object(names[i], x[i], y[i], z[i], 
+    objects = {names[i] : setup.Object(names[i], x[i], y[i], z[i], 
                             dx[i], dy[i], dz[i], 
                             mass[i], size[i], E_d[i], elaticity[i]) 
-                            for i in range(len(x))]
+                            for i in range(len(x))}
     return space, objects
 
 def main(space, objects):
@@ -43,8 +42,9 @@ def main(space, objects):
     data_t = 0
     while space.time < duration:
         i = 0
-        for object in objects:
-            object.time_step(dt, [x for x in objects if x != object])
+        for body in objects:
+            objects[body].time_step(dt, {objects[x].name:objects[x] for x in objects if x != body})
+
             # collided, target, output_1, output_2 = object.time_step(dt, [x for x in objects if x != object])
             # if collided:
             #     objects.remove(object)
@@ -55,11 +55,12 @@ def main(space, objects):
             #         objects.append(output_2)
                 
             if not data_t:
-                cord_record[i].append(np.array(object.cord))
-                v_record[i].append(np.array(object.velocity))
+                cord_record[i].append(np.array(objects[body].cord))
+                v_record[i].append(np.array(objects[body].velocity))
                 # acc_record[i].append(np.array(space.gravity(object.cord, [x for x in objects if x != object])))
             i += 1
         if not data_t:
+            time_record.append(space.time)
             print("Running", len(cord_record[0]), "/", datapoints)           
             data_t = data_dt
 
@@ -109,21 +110,21 @@ plt.figure()
 #     plt.scatter([record[-1][0]], [record[-1][1]])
 # plt.figure()
 
-# n = 0
+n = 0
 
-# while True:
-#     for record in cord_record:
-#         plt.plot([record[i][0] for i in range(n)], [record[i][1] for i in range(n)])
-#         plt.scatter([record[n-1][0]], [record[n-1][1]])
+while True:
+    for record in cord_record:
+        plt.plot([record[i][0] for i in range(n)], [record[i][1] for i in range(n)])
+        plt.scatter([record[n-1][0]], [record[n-1][1]])
 
-#     plt.gca().set_aspect('equal')
-#     plt.title(f"Time = years")
-#     plt.draw()
-#     plt.pause(0.04)
-#     plt.clf()
-#     n += 1
-#     if n > len(cord_record[0]):
-#         n = 0
+    plt.gca().set_aspect('equal')
+    plt.title(f"Time = {n*duration/datapoints/86400:.2f}days")
+    plt.draw()
+    plt.pause(0.04)
+    plt.clf()
+    n += 1
+    if n > len(cord_record[0]):
+        n = 0
 
 
 
@@ -147,5 +148,5 @@ plt.figure()
 # plt.plot(time_record, np.sqrt(np.array([cord_record[2][i][0]-cord_record[1][i][0] for i in range(len(cord_record[2]))]) ** 2
 #          + np.array([cord_record[2][i][1]-cord_record[1][i][1] for i in range(len(cord_record[2]))]) ** 2) )
 
-plt.show()
+# plt.show()
 

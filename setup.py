@@ -8,9 +8,9 @@ class Space:
         accs = []
         acc = np.zeros(3, dtype="float64") 
         gravitational_constant = 6.67 * (10 ** -11)
-        for object in objects:
-            abs_distance = np.sqrt(np.sum((object.cord - cord) ** 2))
-            accs.append(np.array(gravitational_constant * object.mass / (abs_distance ** 2) * ((object.cord - cord) / abs_distance)))
+        for body in objects:
+            abs_distance = np.sqrt(np.sum((objects[body].cord - cord) ** 2))
+            accs.append(np.array(gravitational_constant * objects[body].mass / (abs_distance ** 2) * ((objects[body].cord - cord) / abs_distance)))
         for i in accs:
             acc += i
         return acc
@@ -36,10 +36,10 @@ class Object(Space):
     def time_step(self, time_size, objects):
         self.cord += self.velocity * time_size
         self.velocity += self.gravity(self.cord, objects) * time_size
-        collided, object = self.collision_check(objects)
-        if collided:
-            print("collision with", object.name)
-            # output_1, output_2 = self.collision(object)
+        # collided, object = self.collision_check(objects)
+        # if collided:
+        #     print("collision with", object.name)
+        #     # output_1, output_2 = self.collision(object)
         
         # return False, None, None, None
 
