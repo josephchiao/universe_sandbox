@@ -1,152 +1,84 @@
 import numpy as np
 import setup
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 
-## Set up variables:
-dt = 50  ## Similation resolution, the time step for each physical similation
-duration = 3600000   ## in seconds -----> (10 ** 8 / 3) #1 years
-datapoints = 300  ## The number of data points. Not all similation points are recorded. 
+class Engine():
 
-## automated variables
-data_dt = int(duration / (dt * datapoints))
-cord_record = []
-v_record = []
-time_record = []
+    """Runs the similation"""
 
-## Objects
-names = ["Earth", "Moon", "Space station"]
-x = [0, 384400000, 384400000]
-y = [0, 0, 50000000]
-z = [0, 0, 0]  
-dx = [0, 0, 312.9] ##312.9
-dy = [0, 1022, 1022]
-dz = [0, 0, 0] 
-mass = [5.972 * (10 ** 24), 7.34 * (10 ** 22), 50]
-size = [6371000, 1737000, 100]
-E_d = [2.25 * (10 ** 32), 1.2 * (10 ** 29), 418400]   ## 1 kg tnt = 4184 kJ
-elaticity = [0, 0, 0]
+    def __init__(self):
+        ## Set up variables:
+        self.dt = 10  ## Similation resolution, the time step for each physical similation
+        self.duration = 3600000   ## in seconds -----> (10 ** 8 / 3) #1 years
+        self.datapoints = 300  ## The number of data points. Not all similation points are recorded. 
 
-def initialize():
-    space = setup.Space()
-    objects = {names[i] : setup.Object(names[i], x[i], y[i], z[i], 
-                            dx[i], dy[i], dz[i], 
-                            mass[i], size[i], E_d[i], elaticity[i]) 
-                            for i in range(len(x))}
-    return space, objects
+        ## automated variables
+        self.data_dt = int(self.duration / (self.dt * self.datapoints))
 
-def main(space, objects):
-    cord_record = [[] for i in range(len(objects))]
-    v_record = [[] for i in range(len(objects))]
-    acc_record = [[] for i in range(len(objects))]
-    data_t = 0
-    while space.time < duration:
-        i = 0
-        for body in objects:
-            objects[body].time_step(dt, {objects[x].name:objects[x] for x in objects if x != body})
 
-            # collided, target, output_1, output_2 = object.time_step(dt, [x for x in objects if x != object])
-            # if collided:
-            #     objects.remove(object)
-            #     objects.remove(target)
-            #     if output_1 is not None:
-            #         objects.append(output_1)
-            #     if output_2 is not None:
-            #         objects.append(output_2)
+        ## Object variables
+        self.names = ["Earth", "Moon", "Moon2"]
+        self.x = [0, 384400000, -384400000]
+        self.y = [0, 0, 0]
+        self.z = [0, 0, 0]  
+        self.dx = [0, 0, 0] 
+        self.dy = [0, 1022, -1022]
+        self.dz = [0, 0, 0] 
+        self.mass = [5.972 * (10 ** 24), 7.34 * (10 ** 22), 7.34 * (10 ** 21)]
+        self.size = [6371000, 1737400, 1737400]
+        self.E_d = [2.25 * (10 ** 32), 1.2 * (10 ** 29), 1.2 * (10 ** 29)]   ## 1 kg tnt = 4184 kJ
+        self.elaticity = [0.9, 0.9, 0.9]
+
+    def initialize(self):
+        self.space = setup.Space()
+        self.objects = {self.names[i] : setup.Object(self.names[i], self.x[i], self.y[i], self.z[i], 
+                                self.dx[i], self.dy[i], self.dz[i], 
+                                self.mass[i], self.size[i], self.E_d[i], self.elaticity[i]) 
+                                for i in range(len(self.x))}
+
+    def main(self):
+
+        cord_record = [[] for i in range(len(self.objects))]
+        v_record = [[] for i in range(len(self.objects))]
+        acc_record = [[] for i in range(len(self.objects))]
+        time_record = []
+        data_t = 0
+        pop_pending = []
+        stop = False
+
+        while self.space.time < self.duration:
+            i = 0
+            for body in self.objects:
+                collision = self.objects[body].time_step(self.dt, {self.objects[x].name:self.objects[x] for x in self.objects if x != body})
                 
+                if collision:
+                    for c in collision:
+                        stop = self.objects[body].collision_step(self.dt, c)
+                        if stop:
+                            break                
+                if not data_t:
+                    cord_record[i].append(np.array(self.objects[body].cord))
+                    v_record[i].append(np.array(self.objects[body].velocity))
+                    acc_record[i].append(np.array(self.space.gravity(self.objects[body].cord, {self.objects[x].name:self.objects[x] for x in self.objects if x != body})))
+                i += 1
+
+                if self.objects[body].destroyed:
+                    pop_pending.append(self.objects[body].name)
+
             if not data_t:
-                cord_record[i].append(np.array(objects[body].cord))
-                v_record[i].append(np.array(objects[body].velocity))
-                # acc_record[i].append(np.array(space.gravity(object.cord, [x for x in objects if x != object])))
-            i += 1
-        if not data_t:
-            time_record.append(space.time)
-            print("Running", len(cord_record[0]), "/", datapoints)           
-            data_t = data_dt
-
-        space.time += dt
-        data_t -= 1
-    
-    return cord_record, v_record, acc_record
+                time_record.append(self.space.time)
+                print("Running", len(cord_record[0]), "/", self.datapoints)           
+                data_t = self.data_dt
         
-space, objects = initialize()
-cord_record, v_record, acc_record = main(space, objects)
+            for body in pop_pending:
+                self.objects.pop(body)
+            pop_pending = []
 
+            self.space.time += self.dt
+            data_t -= 1
+            if stop:
+                print("Two body annihilation event. Engine stopped")
+                break
 
-
-## Display function
-
-for record in cord_record:
-    plt.plot(time_record, [record[i][0] for i in range(len(record))])
-plt.title("x")
-plt.legend([f"Object {i + 1}" for i in range(len(x))])
-plt.figure()
-
-# for record in cord_record:
-#     plt.plot(time_record, [record[i][1] for i in range(len(record))])
-# plt.title("y")
-# plt.legend([f"Object {i + 1}" for i in range(len(x))])
-# plt.figure()
-
-# for record in cord_record:
-#     plt.plot(time_record, [record[i][2] for i in range(len(record))])
-# plt.title("z")
-# plt.legend([f"Object {i + 1}" for i in range(len(x))])
-# plt.figure()
-
-# for record in v_record:
-#     plt.plot(time_record, [record[i][0] for i in range(len(record))])
-# plt.title("dx")
-# plt.legend([f"Object {i + 1}" for i in range(len(x))])
-# plt.figure()
-
-# for record in cord_record:
-#     plt.plot([record[i][0] for i in range(len(record))], [record[i][1] for i in range(len(record))])
-#     plt.scatter([record[-1][0]], [record[-1][1]])
-# plt.figure()
-
-# for record in cord_record:
-#     plt.plot([record[i][0] for i in range(len(record))], [record[i][1] for i in range(len(record))])
-#     plt.scatter([record[-1][0]], [record[-1][1]])
-# plt.figure()
-
-n = 0
-
-while True:
-    for record in cord_record:
-        plt.plot([record[i][0] for i in range(n)], [record[i][1] for i in range(n)])
-        plt.scatter([record[n-1][0]], [record[n-1][1]])
-
-    plt.gca().set_aspect('equal')
-    plt.title(f"Time = {n*duration/datapoints/86400:.2f}days")
-    plt.draw()
-    plt.pause(0.04)
-    plt.clf()
-    n += 1
-    if n > len(cord_record[0]):
-        n = 0
-
-
-
-# for record in v_record:
-#     plt.plot(time_record, [record[i][1] for i in range(len(record))])
-# plt.title("dy")
-# plt.legend([f"Object {i + 1}" for i in range(len(x))])
-# plt.figure()
-
-# for record in v_record:
-#     plt.plot(time_record, [record[i][2] for i in range(len(record))])
-# plt.title("dz")
-# plt.legend([f"Object {i + 1}" for i in range(len(x))])
-# plt.figure()
-
-# plt.plot(time_record, [cord_record[2][i][0]-cord_record[1][i][0] for i in range(len(cord_record[2]))])
-# plt.plot(time_record, [cord_record[2][i][1]-cord_record[1][i][1] for i in range(len(cord_record[2]))])
-# plt.plot(time_record, [0 for i in range(300)])
-# plt.figure()
-
-# plt.plot(time_record, np.sqrt(np.array([cord_record[2][i][0]-cord_record[1][i][0] for i in range(len(cord_record[2]))]) ** 2
-#          + np.array([cord_record[2][i][1]-cord_record[1][i][1] for i in range(len(cord_record[2]))]) ** 2) )
-
-# plt.show()
-
+        return time_record, cord_record, v_record, acc_record
+            
