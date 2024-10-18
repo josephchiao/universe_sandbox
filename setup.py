@@ -1,6 +1,9 @@
 import numpy as np
 
 class Space:
+
+    """Mainly for storing global variable such as time"""
+
     def __init__(self):
         self.time = 0  ## Overall time
     
@@ -32,55 +35,110 @@ class Object(Space):
         self.size = size
         self.break_energy = f
         self.elaticity = elaticity
+        self.destroyed = False
     
     def time_step(self, time_size, objects):
         self.cord += self.velocity * time_size
         self.velocity += self.gravity(self.cord, objects) * time_size
-        # collided, object = self.collision_check(objects)
-        # if collided:
-        #     print("collision with", object.name)
-        #     # output_1, output_2 = self.collision(object)
-        
-        # return False, None, None, None
+        collision = self.collision_check(objects)
+        return collision
 
     def collision_check(self, objects):
-        for object in objects:
-            abs_dis = np.sqrt(np.sum((self.cord - object.cord) ** 2))
-            if abs_dis < object.size + self.size:
-                return True, object
-        return False, None
+        collisions = []
+        for body in objects:
+            abs_dis = np.sqrt(np.sum((self.cord - objects[body].cord) ** 2))
+            if abs_dis < objects[body].size + self.size:
+                collisions.append(Collision(self, objects[body]))
 
+        return collisions
+    
+    def collision_step(self, time_size, collision):
+    
+        if not collision.evaluated:
+            stop = collision.collision()
 
-    def collision(self, object):
+        if stop:
+            return True
+
+        while collision.collision_check_bool():
+            collision.object_1.cord += collision.object_1.velocity * time_size
+            collision.object_2.cord += collision.object_2.velocity * time_size
+
+        return False
+
+class Collision():
+
+    """Computes the collision mechenism between two objects"""
+
+    def __init__(self, object_1 = None, object_2 = None):
         
-        comb_elaticity = (self.elaticity + object.elaticity) / 2
-        e_i_self = 0.5 * self.mass * (np.sum(self.velocity ** 2))
-        e_i_other = 0.5 * object.mass * (np.sum(object.velocity ** 2))
-        e_i_comb = e_i_self + e_i_other
-        e_f_comb = e_i_comb * comb_elaticity
+        self.object_1 = object_1
+        self.object_2 = object_2
+        self.evaluated = False
+
+    def collision(self):
+        
+        self.evaluated = True
+        print("Collision between", self.object_1.name, "and", self.object_2.name)
+
+        comb_elaticity = (self.object_1.elaticity +self.object_2.elaticity) / 2
+        e_i_1 = 0.5 * self.object_1.mass * (np.sum(self.object_1.velocity ** 2))
+        e_i_2 = 0.5 * self.object_2.mass * (np.sum(self.object_2.velocity ** 2))
+        e_i_comb = e_i_1 + e_i_2
+        
+        v_ela_1 = ((self.object_1.mass - self.object_2.mass) * self.object_1.velocity + 2 * self.object_2.mass * self.object_2.velocity)/(self.object_1.mass + self.object_2.mass)
+        v_inela = (self.object_1.mass * self.object_1.velocity + self.object_2.mass * self.object_2.velocity)/(self.object_1.mass + self.object_2.mass)
+
+        impulse_ela_1 = (v_ela_1 - self.object_1.velocity) * self.object_1.mass
+        impulse_inela_1 = (v_inela - self.object_1.velocity) * self.object_1.mass
+        true_impulse_1 = (impulse_ela_1 - impulse_inela_1) * comb_elaticity + impulse_inela_1
+        true_impulse_2 = -true_impulse_1
+
+        v_f_1 = self.object_1.velocity + true_impulse_1 / self.object_1.mass
+        v_f_2 = self.object_2.velocity + true_impulse_2 / self.object_2.mass
+
+        e_f_1 = 0.5 * self.object_1.mass * (np.sum(v_f_1 ** 2))
+        e_f_2 = 0.5 * self.object_2.mass * (np.sum(v_f_2 ** 2))
+        e_f_comb = e_f_1 + e_f_2
         e_residule = e_i_comb - e_f_comb
 
-        p_i_self = self.mass * self.velocity
-        p_i_other = object.mass * object.velocity
-        p_comb = p_i_self + p_i_other
+        if (self.object_1.elaticity + self.object_2.elaticity) == 0:
+            e_share_1 = 0.5
+            e_share_2 = 0.5
+        else:
+            e_share_1 = self.object_2.elaticity / (self.object_1.elaticity + self.object_2.elaticity)
+            e_share_2 = self.object_1.elaticity / (self.object_1.elaticity + self.object_2.elaticity)
+        e_residule_1 = e_residule * e_share_1
+        e_residule_2 = e_residule * e_share_2
 
-        if e_self_residule > self.break_energy and e_other_residule > object.break_energy:
-
-            return None, None
+        if e_residule_1 > self.object_1.break_energy and e_residule_2 > self.object_2.break_energy:
+            self.object_1.destroyed, self.object_2.destroyed = True, True
+            return True
         
-        elif e_self_residule > self.break_energy or e_other_residule > object.break_energy:
-            ## Combine two object
+        elif e_residule_1 > self.object_1.break_energy:
 
-            remaining_object = None
-            return remaining_object
+            self.object_2.velocity = v_inela
+            self.object_2.mass += self.object_1.mass
+            self.object_2.break_energy -= e_residule_2
+            self.object_1.destroyed, self.object_2.destroyed = True, False
+            return False
 
+        elif e_residule_2 > self.object_2.break_energy:
+            self.object_1.velocity = v_inela
+            self.object_1.mass += self.object_2.mass
+            self.object_1.break_energy -= e_residule_1
+            self.object_1.destroyed, self.object_2.destroyed = False, True
+            return False
 
-        f_vector_self = self.cord - object.cord
-        f_vector_other = -f_vector_self
+        else:
+            self.object_1.velocity = v_f_1
+            self.object_1.break_energy -= e_residule_1
+            self.object_2.velocity = v_f_2
+            self.object_2.break_energy -= e_residule_2
+            return False
 
-        e_self_share = object.elaticity / (self.elaticity + object.elaticity)
-        e_other_share = self.elaticity / (self.elaticity + object.elaticity)
-        e_self_residule = e_residule * e_self_share
-        e_other_residule = e_residule * e_other_share
-
-        return 
+    
+    def collision_check_bool(self):
+        abs_dis = np.sqrt(np.sum((self.object_1.cord - self.object_2.cord) ** 2))
+        return (abs_dis < self.object_2.size + self.object_1.size)
+    
