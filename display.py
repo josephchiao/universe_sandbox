@@ -1,8 +1,6 @@
 import engine
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd 
-
 
 def run_engine():
 
@@ -15,14 +13,13 @@ def run_engine():
 
 def data_storage(file):
     time_record, cord_record, v_record, acc_record, names, duration, datapoints = run_engine()
-    np.savez(file, time_record = time_record, cord_record = cord_record, v_record = v_record, acc_record = acc_record, names = names, duration = duration, datapoints = datapoints)
+    np.savez(file, time_record = time_record, cord_record = cord_record, v_record = v_record, acc_record = acc_record, names = names, duration = duration, datapoints = datapoints, allow_pickle=True)
 
 def data_retrieval(file):
     
-    data = np.load(file)
+    data = np.load(file, allow_pickle=True)
 
     return data['time_record'], data['cord_record'], data['v_record'], data['acc_record'], data['names'], data['duration'], data['datapoints']
-
 
 ## Display functions
 
@@ -93,6 +90,24 @@ def static_displays(time_record, cord_record, v_record, acc_record, names):
     plt.figure()
 
     name_count = 0
+    plt.plot(time_record[0:len(cord_record[3])], [np.sqrt(np.sum(np.array(cord_record[10][i]-np.array(cord_record[3][i])) ** 2)) for i in range(len(cord_record[3]))])
+    print('min distance =', min([np.sqrt(np.sum(np.array(cord_record[10][i]-np.array(cord_record[3][i])) ** 2)) for i in range(len(cord_record[3]))]) / 1000, 'km on day',  np.argmin([np.sqrt(np.sum(np.array(cord_record[10][i]-np.array(cord_record[3][i])) ** 2)) for i in range(len(cord_record[3]))]))
+    plt.plot(time_record[0:len(cord_record[3])], np.zeros(len(cord_record[3])))
+    plt.title('distance between earth and 16 Psyche')
+    plt.figure()
+
+    # ax = plt.axes(projection='3d')
+    # while True:
+    #     plt.cla()
+
+    #     for i in range(3620, 3650):
+    #         ax.scatter3D([cord_record[0][i][0]], [cord_record[0][i][1]], [cord_record[0][i][2]], label = f'Sun {i}', c = 'y')
+    #         ax.scatter3D([cord_record[3][i][0]], [cord_record[3][i][1]], [cord_record[3][i][2]], label = 'Earth', c = 'b')
+    #         ax.scatter3D([cord_record[10][i][0]], [cord_record[10][i][1]], [cord_record[10][i][2]], label = '16 Psyche', c = 'r')
+    #         ax.legend()
+    #         plt.pause(1)
+    
+    name_count = 0
     for record in acc_record:
         plt.plot(time_record[0:len(record)], [record[i][2] for i in range(len(record))], label = names[name_count])
         name_count += 1
@@ -149,10 +164,11 @@ def active_display_3d(cord_record, names, duration, datapoints, leg = 300):
 # static_displays()
 # active_display_2d()
 # active_display_3d()
+data_storage("saved_data/psyche_position_10years_2.npz")
+time_record, cord_record, v_record, acc_record, names, duration, datapoints = data_retrieval("saved_data/psyche_position_10years_2.npz")
+# time_record, cord_record, v_record, acc_record, names, duration, datapoints = run_engine()
 
-# data_storage("saved_data/solar_system_over_1_year.npz")
-time_record, cord_record, v_record, acc_record, names, duration, datapoints = data_retrieval("saved_data/solar_system_over_1_year.npz")
 
-# active_display_2d(cord_record, names, duration, datapoints)
-# static_displays(time_record, cord_record, v_record, acc_record, names)
-active_display_3d(cord_record, names, duration, datapoints)
+# active_display_2d(cord_record, names, duration, datapoints, leg=365)
+static_displays(time_record, cord_record, v_record, acc_record, names)
+# active_display_3d(cord_record, names, duration, datapoints)
