@@ -58,13 +58,15 @@ class Object(Space):
         ## Evaluates velocity and acceleration
         ## Also detects collision, but does not compute the outcome. 
         
+
+        acc = self.gravity(self.cord, objects)
         delta_cord = self.velocity * time_size
-        delta_v = self.gravity(self.cord, objects) * time_size
+        delta_v =  acc * time_size
         self.cord += delta_cord
         self.velocity += delta_v
         collision = self.collision_check(objects)
 
-        return collision
+        return collision, acc
 
     def collision_check(self, objects):
 
