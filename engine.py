@@ -62,7 +62,7 @@ class Engine():
             for body in self.objects:  ## Cycle through each objects in space
                 if not self.objects[body].destroyed:
                     
-                    collision = self.objects[body].time_step(self.dt, {self.objects[x].name:self.objects[x] for x in self.objects if x != body and not self.objects[x].destroyed})
+                    collision, gravity = self.objects[body].time_step(self.dt, {self.objects[x].name:self.objects[x] for x in self.objects if x != body and not self.objects[x].destroyed})
                     
                     if collision:
                         for c in collision:
@@ -85,7 +85,7 @@ class Engine():
                 if not data_t:  ## Data recording interval
                     cord_record[i].append(np.array(self.objects[body].cord))
                     v_record[i].append(np.array(self.objects[body].velocity))
-                    acc_record[i].append(np.array(self.space.gravity(self.objects[body].cord, {self.objects[x].name:self.objects[x] for x in self.objects if x != body and not self.objects[x].destroyed})))
+                    acc_record[i].append(np.array(gravity))
                 
                 i += 1
 
