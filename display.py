@@ -33,6 +33,8 @@ def static_displays(time_record, cord_record, v_record, acc_record, names, items
         plt.plot(time_record[0:len(record)], [record[i][0] for i in range(len(record))], label = names[name_count])            
         name_count += 1
     plt.title("x")
+    plt.xlabel('s')
+    plt.ylabel('m')
     plt.legend()
     plt.figure()
 
@@ -41,6 +43,8 @@ def static_displays(time_record, cord_record, v_record, acc_record, names, items
         plt.plot(time_record[0:len(record)], [record[i][1] for i in range(len(record))], label = names[name_count])
         name_count += 1
     plt.title("y")
+    plt.xlabel('s')
+    plt.ylabel('m')
     plt.legend()
     plt.figure()
 
@@ -49,6 +53,8 @@ def static_displays(time_record, cord_record, v_record, acc_record, names, items
         plt.plot(time_record[0:len(record)], [record[i][2] for i in range(len(record))], label = names[name_count])
         name_count += 1
     plt.title("z")
+    plt.xlabel('s')
+    plt.ylabel('m')
     plt.legend()
     plt.figure()
 
@@ -57,6 +63,8 @@ def static_displays(time_record, cord_record, v_record, acc_record, names, items
         plt.plot(time_record[0:len(record)], [record[i][0] for i in range(len(record))], label = names[name_count])
         name_count += 1
     plt.title("vx")
+    plt.xlabel('s')
+    plt.ylabel('m')
     plt.legend()
     plt.figure()
 
@@ -65,6 +73,8 @@ def static_displays(time_record, cord_record, v_record, acc_record, names, items
         plt.plot(time_record[0:len(record)], [record[i][1] for i in range(len(record))], label = names[name_count])
         name_count += 1
     plt.title("vy")
+    plt.xlabel('s')
+    plt.ylabel('m')
     plt.legend()
     plt.figure()
 
@@ -73,32 +83,52 @@ def static_displays(time_record, cord_record, v_record, acc_record, names, items
         plt.plot(time_record[0:len(record)], [record[i][2] for i in range(len(record))], label = names[name_count])
         name_count += 1
     plt.title("vz")
+    plt.xlabel('s')
+    plt.ylabel('m')
     plt.legend()
-    plt.figure()
+    # plt.figure()
     
-    name_count = 0
-    for record in acc_record[0:items]:
-        plt.plot(time_record[0:len(record)], [record[i][0] for i in range(len(record))], label = names[name_count])
-        name_count += 1
-    plt.title("ax")
-    plt.legend()
-    plt.figure()
-
-    name_count = 0
-    for record in acc_record[0:items]:
-        plt.plot(time_record[0:len(record)], [record[i][1] for i in range(len(record))], label = names[name_count])
-        name_count += 1
-    plt.title("ay")
-    plt.legend()
-    plt.figure()
-
     # name_count = 0
-    # plt.plot(time_record[0:len(cord_record[4])], [np.sqrt(np.sum(np.array(cord_record[5][i]-np.array(cord_record[4][i])) ** 2)) for i in range(len(cord_record[4]))])
-    # print('min distance =', min([np.sqrt(np.sum(np.array(cord_record[5][i]-np.array(cord_record[4][i])) ** 2)) for i in range(len(cord_record[4]))]) / 1000, 'km on day',  np.argmin([np.sqrt(np.sum(np.array(cord_record[5][i]-np.array(cord_record[4][i])) ** 2)) for i in range(len(cord_record[4]))]))
-    # plt.plot(time_record[0:len(cord_record[4])], np.zeros(len(cord_record[4])))
-    # plt.title('distance between earth and astroid')
+    # for record in acc_record[0:items]:
+    #     plt.plot(time_record[0:len(record)], [record[i][0] for i in range(len(record))], label = names[name_count])
+    #     name_count += 1
+    # plt.title("ax")
+    # plt.xlabel('s')
+    # plt.ylabel('m')
+    # plt.legend()
     # plt.figure()
 
+    # name_count = 0
+    # for record in acc_record[0:items]:
+    #     plt.plot(time_record[0:len(record)], [record[i][1] for i in range(len(record))], label = names[name_count])
+    #     name_count += 1
+    # plt.title("ay")
+    # plt.xlabel('s')
+    # plt.ylabel('m')
+    # plt.legend()
+    # plt.figure()
+    
+    # name_count = 0
+    # for record in acc_record[0:items]:
+    #     plt.plot(time_record[0:len(record)], [record[i][2] for i in range(len(record))], label = names[name_count])
+    #     name_count += 1
+    # plt.xlabel('s')
+    # plt.ylabel('m')
+    # plt.title("az")
+    # plt.legend()
+    plt.show()
+
+def astroid_vs_earth(time_record, cord_record, v_record, acc_record, names, items = 0):
+
+    name_count = 0
+    plt.plot(time_record[0:len(cord_record[4])], [np.sqrt(np.sum(np.array(cord_record[5][i]-np.array(cord_record[4][i])) ** 2)) for i in range(len(cord_record[4]))])
+    print('min distance =', min([np.sqrt(np.sum(np.array(cord_record[5][i]-np.array(cord_record[4][i])) ** 2)) for i in range(len(cord_record[4]))]) / 1000, 'km on day',  np.argmin([np.sqrt(np.sum(np.array(cord_record[5][i]-np.array(cord_record[4][i])) ** 2)) for i in range(len(cord_record[4]))]))
+    plt.plot(time_record[0:len(cord_record[4])], np.zeros(len(cord_record[4])))
+    plt.xlabel('s')
+    plt.ylabel('m')
+    plt.title('distance between earth and astroid')
+    plt.show()
+    
     # ax = plt.axes(projection='3d')
     # while True:
     #     plt.cla()
@@ -110,15 +140,7 @@ def static_displays(time_record, cord_record, v_record, acc_record, names, items
     #         ax.scatter3D([cord_record[-6][i][0]], [cord_record[-6][i][1]], [cord_record[-6][i][2]], label = 'moon', c = 'w')
     #         ax.legend()
     #         plt.pause(0.1)
-    
-    name_count = 0
-    for record in acc_record[0:items]:
-        plt.plot(time_record[0:len(record)], [record[i][2] for i in range(len(record))], label = names[name_count])
-        name_count += 1
-    plt.title("az")
-    plt.legend()
-    plt.show()
-        
+
 def collision_stats(stats):
 
     for collision in stats:
@@ -149,7 +171,8 @@ def active_display_2d(cord_record, names, duration, datapoints, leg = 300):
                 if n <= len(record):
                     plt.plot([record[i][0] for i in range(max(0, n-leg), n)], [record[i][1] for i in range(max(0, n-leg), n)])
                     plt.scatter([record[n-1][0]], [record[n-1][1]], label = names[name_count], s = 10)
-
+                    plt.xlabel('m')
+                    plt.ylabel('m')
                     plt.legend()
                     name_count += 1
 
@@ -168,6 +191,8 @@ def static_display_2d(cord_record, names, duration, datapoints, index = 0, leg =
         if index <= len(record):
             plt.plot([record[i][0] for i in range(max(0, index-leg), index)], [record[i][1] for i in range(max(0, index-leg), index)])
             plt.scatter([record[index-1][0]], [record[index-1][1]], label = names[name_count], s = 10)
+            plt.xlabel('m')
+            plt.ylabel('m')
             plt.legend()
             name_count += 1
 
@@ -201,10 +226,18 @@ def active_display_3d(cord_record, names, duration, datapoints, leg = 300):
 
 # data_storage("saved_data/inelastic_collision_demo.npz")
 # time_record, cord_record, v_record, acc_record, names, duration, datapoints, collision_record = data_retrieval("saved_data/earth_destruction.npz")
-# time_record, cord_record, v_record, acc_record, names, duration, datapoints = run_engine()
+# time_record, cord_record, v_record, acc_record, names, duration, datapoint, collision_record = run_engine()
 
 
+# static_display_2d(cord_record, names, duration, datapoints, index = 380,leg=365, items = 7)
 # active_display_2d(cord_record, names, duration, datapoints, leg=365)
 # collision_stats(collision_record)
 # static_displays(time_record, cord_record, v_record, acc_record, names)
 # active_display_3d(cord_record, names, duration, datapoints)
+
+
+# time_record, cord_record, v_record, acc_record, names, duration, datapoints, collision_record = data_retrieval("/Users/joseph_chiao/Desktop/School/Second year/PHYS 210/Project1/universe_sandbox/saved_data/astroid_deflection_3.npz")
+
+# collision_stats(collision_record)
+# static_display_2d(cord_record, names, duration, datapoints, index = 390,leg=390, items = 7)
+# astroid_vs_earth(time_record, cord_record, v_record, acc_record, names)
