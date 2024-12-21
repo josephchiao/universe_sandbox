@@ -170,7 +170,7 @@ self.elaticity = [0.9, 0.9, 0.9]
         self.data_dt = int(self.duration / (self.dt * self.datapoints))
 
         # Object variables (units = m, kg, J)
-        self.names =     ["Sun"                 , "Mercury"             , "Venus"               , "astroid"             , "Earth"               , "Moon"                , "Mars"                , "Jupiter (Barycenter)", "Saturn (Barycenter)" , "Uranus (Barycenter)" , "Neptune (Barycenter)"]
+        self.names =     ["Sun"                 , "Mercury"             , "Venus"               , "asteroid"             , "Earth"               , "Moon"                , "Mars"                , "Jupiter (Barycenter)", "Saturn (Barycenter)" , "Uranus (Barycenter)" , "Neptune (Barycenter)"]
         self.x =         [-1241924654.5487933   , -57423527084.54072    , 37943999002.088       , -323495056813.24725   , 132140938185.13399    , 132400174000.5617, -179299431372.5338, 577693482913.3275, 1323585217557.627, 1868160650286.1194, 4461293790804.06]
         self.y =         [-354155988.1561043    , -31790363319.887604   , 100313067648.4387     , -128232618847.50706   , 65997227870.61564     , 66281304678.34605, -154637987281.05435, 466576221214.15375, -612055661341.7163, 2263357426851.0527, -302765441854.54767]        
         self.z =         [31892137.09187997     , 2616109327.873867     , -846662043.336351     , 41555500.457121804    , 26861617.26038269     , 40523690.38979437, 1166151638.0732164, -14860318359.027002, -42056128139.69338, -15796204675.421812, -96580166934.55392]        
@@ -184,7 +184,7 @@ self.elaticity = [0.9, 0.9, 0.9]
         self.grav_sig =  [True                  ,True                   ,True                   , False                 ,True                   ,True                   ,True                   ,True                   ,True                   ,True                   ,True                   ]
 
 
-## Setup for astroid deflection
+## Setup for asteroid deflection
         ## Set up variables:
         self.dt =  60  ## Similation resolution, the time step for each physical similation
         self.duration = 380 * (24 * 60 * 60)   ## total duration of the similation in seconds
@@ -194,7 +194,7 @@ self.elaticity = [0.9, 0.9, 0.9]
         self.data_dt = int(self.duration / (self.dt * self.datapoints))
 
         # Object variables (units = m, kg, J)
-        self.names =     ["Sun"                 , "Mercury"             , "Venus"               , "astroid destroyer"   , "astroid"             , "Earth"               , "Moon"                , "Mars"                , "Jupiter (Barycenter)", "Saturn (Barycenter)" , "Uranus (Barycenter)" , "Neptune (Barycenter)"]
+        self.names =     ["Sun"                 , "Mercury"             , "Venus"               , "asteroid destroyer"   , "asteroid"             , "Earth"               , "Moon"                , "Mars"                , "Jupiter (Barycenter)", "Saturn (Barycenter)" , "Uranus (Barycenter)" , "Neptune (Barycenter)"]
         self.x =         [-1241924654.5487933   , -57423527084.54072    , 37943999002.088       , -323155138290.4917    , -323495056813.24725   , 132140938185.13399    , 132400174000.5617, -179299431372.5338, 577693482913.3275, 1323585217557.627, 1868160650286.1194, 4461293790804.06]
         self.y =         [-354155988.1561043    , -31790363319.887604   , 100313067648.4387     , -128041901523.67165   , -128232618847.50706   , 65997227870.61564     , 66281304678.34605, -154637987281.05435, 466576221214.15375, -612055661341.7163, 2263357426851.0527, -302765441854.54767]        
         self.z =         [31892137.09187997     , 2616109327.873867     , -846662043.336351     , 41555500.457121804    , 41555500.457121804    , 26861617.26038269     , 40523690.38979437, 1166151638.0732164, -14860318359.027002, -42056128139.69338, -15796204675.421812, -96580166934.55392]        
@@ -207,7 +207,7 @@ self.elaticity = [0.9, 0.9, 0.9]
         self.elaticity = [0                     , 0                     , 0                     , 0                     , 0                     , 0                     , 0                     , 0                     , 0                     , 0                     , 0                     , 0                     ] 
         self.grav_sig =  [True                  ,True                   ,True                   , False                 , False                 ,True                   ,True                   ,True                   ,True                   ,True                   ,True                   ,True                   ]
 
-## Setup for astroid deflection 2
+## Setup for asteroid deflection 2
         ## Set up variables:
         self.dt =  60  ## Similation resolution, the time step for each physical similation
         self.duration = 390 * (24 * 60 * 60)   ## total duration of the similation in seconds
@@ -217,7 +217,7 @@ self.elaticity = [0.9, 0.9, 0.9]
         self.data_dt = int(self.duration / (self.dt * self.datapoints))
 
         # Object variables (units = m, kg, J)
-        self.names =     ["Sun"                 , "Mercury"             , "Venus"               , "astroid destroyer"   , "astroid"             , "Earth"               , "Moon"                , "Mars"                , "Jupiter (Barycenter)", "Saturn (Barycenter)" , "Uranus (Barycenter)" , "Neptune (Barycenter)"]
+        self.names =     ["Sun"                 , "Mercury"             , "Venus"               , "asteroid destroyer"   , "asteroid"             , "Earth"               , "Moon"                , "Mars"                , "Jupiter (Barycenter)", "Saturn (Barycenter)" , "Uranus (Barycenter)" , "Neptune (Barycenter)"]
         self.x =         [-1247538694.3948715   , -58401220110.82201    , 61865306578.36496     , -322061520933.1921    , -328525502050.62384, 141179219440.84418, 141266969135.8286, -191776493906.61255, 584135629348.5728, 1320835821410.3665, 1872280999018.8354, 4461033642021.029]
         self.y =         [-343726271.23660105   , 2848378913.1954217    , 87496380943.57643     , -113923208343.5393    , -117548584378.98447, 44643852906.39927, 44268816032.629616, -141553360976.91095, 458148872956.502, -618851573311.8679, 2260229616472.229, -307007474684.70935]        
         self.z =         [31932482.312488884    , 5535173159.077526     , -2403379506.6516743   , 40834237.374230295    , 40834453.17287625, 28856142.351122275, -5697961.251312533, 1746111385.727305, -14969486157.224499, -41828492612.06469, -15861200187.550415, -96486814971.22049]        
@@ -232,7 +232,7 @@ self.elaticity = [0.9, 0.9, 0.9]
 
 
 
-## Setup for astroid deflection 3
+## Setup for asteroid deflection 3
         ## Set up variables:
         self.dt =  60  ## Similation resolution, the time step for each physical similation
         self.duration = 390 * (24 * 60 * 60)   ## total duration of the similation in seconds
@@ -242,7 +242,7 @@ self.elaticity = [0.9, 0.9, 0.9]
         self.data_dt = int(self.duration / (self.dt * self.datapoints))
 
         # Object variables (units = m, kg, J)
-        self.names =     ["Sun"                 , "Mercury"             , "Venus"               , "astroid destroyer"   , "astroid"             , "Earth"               , "Moon"                , "Mars"                , "Jupiter (Barycenter)", "Saturn (Barycenter)" , "Uranus (Barycenter)" , "Neptune (Barycenter)"]
+        self.names =     ["Sun"                 , "Mercury"             , "Venus"               , "asteroid destroyer"   , "asteroid"             , "Earth"               , "Moon"                , "Mars"                , "Jupiter (Barycenter)", "Saturn (Barycenter)" , "Uranus (Barycenter)" , "Neptune (Barycenter)"]
         self.x =         [-1247538694.3948715   , -58401220110.82201    , 61865306578.36496     , -322061520933.1921    , -328525502050.62384, 141179219440.84418, 141266969135.8286, -191776493906.61255, 584135629348.5728, 1320835821410.3665, 1872280999018.8354, 4461033642021.029]
         self.y =         [-343726271.23660105   , 2848378913.1954217    , 87496380943.57643     , -113923208343.5393    , -117548584378.98447, 44643852906.39927, 44268816032.629616, -141553360976.91095, 458148872956.502, -618851573311.8679, 2260229616472.229, -307007474684.70935]        
         self.z =         [31932482.312488884    , 5535173159.077526     , -2403379506.6516743   , 40834237.374230295    , 40834453.17287625, 28856142.351122275, -5697961.251312533, 1746111385.727305, -14969486157.224499, -41828492612.06469, -15861200187.550415, -96486814971.22049]        
